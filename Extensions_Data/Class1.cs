@@ -30,10 +30,24 @@ namespace Extensions_Data
         /// </summary>
         /// <param name="mainDataSet"></param>
         /// <param name="subtractorDataSet"></param>
-        /// <returns></returns>
+        /// <returns>If subtractorDataSet is null, this function just returns mainDataSet...</returns>
         public static DataSet Minus(this DataSet mainDataSet, DataSet subtractorDataSet)
         {
             DataSet Result = mainDataSet.Copy();
+            if (subtractorDataSet == null)
+                return Result;
+
+            // if the two DataSets aren't comparable (ie columns don't match) then throw exception
+            if (mainDataSet.Tables[0].Columns.Count != subtractorDataSet.Tables[0].Columns.Count)
+                throw new Exception("You attempted to compare two datasets whose first tables had a different number of columns in it. \n\nDataSet.Minus(DataSet)");
+
+            for (int i = 0;  i < mainDataSet.Tables[0].Columns.Count; i++)  // check that each columns name and dataset are equal
+            {
+                if (mainDataSet.Tables[0].Columns[i].ColumnName != subtractorDataSet.Tables[0].Columns[i].ColumnName)
+                    throw new Exception("You attempted to compare two datasets whose first tables had differing column Names...  \n They must appear in the same order... \n\nDataSet.Minus(DataSet)");
+                if (mainDataSet.Tables[0].Columns[i].DataType != subtractorDataSet.Tables[0].Columns[i].DataType)
+                    throw new Exception("You attempted to compare two datasets whose first tables had differing column datatypes. \n\nDataSet.Minus(DataSet)");
+            }
 
             string formatterText = ""; // this is used to format the svl query on the dataset    eg "{0} = {1}"
             string[] myColumnNamesAndVals = new string[subtractorDataSet.Tables[0].Columns.Count * 2];
