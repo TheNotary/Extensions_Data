@@ -8,3 +8,8 @@ C:\Users\Macklehatton\Desktop\NET projects\Extensions_Data\DemonstrationProject\
 C:\Users\Macklehatton\Desktop\NET projects\Extensions_Data\DemonstrationProject\obj\x86\Debug\DemonstrationProject.exe
 C:\Users\Macklehatton\Desktop\NET projects\Extensions_Data\DemonstrationProject\obj\x86\Debug\DemonstrationProject.pdb
 C:\Users\Macklehatton\Desktop\NET projects\Extensions_Data\DemonstrationProject\bin\Debug\DemonstrationProject.exe.config
+C:\Users\Macklehatton\Desktop\NET projects\Extensions_Data\DemonstrationProject\bin\Debug\Extensions_Data.dll
+C:\Users\Macklehatton\Desktop\NET projects\Extensions_Data\DemonstrationProject\bin\Debug\Extensions_Data.pdb
+C:\Users\newt\Desktop\NET projects\Extensions_Data\DemonstrationProject\bin\Debug\DemonstrationProject.exe.config
+C:\Users\newt\Desktop\NET projects\Extensions_Data\DemonstrationProject\obj\x86\Debug\DemonstrationProject.exe
+C:\Users\newt\Desktop\NET projects\Extensions_Data\DemonstrationProject\obj\x86\Debug\DemonstrationProject.pdb
