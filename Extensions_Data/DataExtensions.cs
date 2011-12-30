@@ -120,7 +120,7 @@ namespace Extensions_Data
                             rowsDataAsString = Convert.ToString(subtractorRow[i]);
                             break;
                         case "string":
-                            rowsDataAsString = "'" + (string)subtractorRow[i] + "'";
+                            rowsDataAsString = "'" + ((string)subtractorRow[i]).EscapeSingleQuotes() + "'";
                             break;
                         //case "yesno":
                         //        rowsDataAsString = Convert.ToString(subtractorRow[i]);
@@ -141,10 +141,10 @@ namespace Extensions_Data
                 }
 
 
-
                 string svl = string.Format(formatterText,   //  eg  "{0} = {1}, {2} = {3}"
                     myColumnNamesAndVals);                  //  eg  { "Index", "1", "Data", "bla" }
 
+                // I need to escape single quotes...
                 DataRow[] HitRows = Result.Tables[0].Select(svl);
 
                 foreach (DataRow rw in HitRows)
@@ -273,6 +273,22 @@ namespace Extensions_Data
             return SourceString;
         }
 
+        public static string EscapeSingleQuotes(this string sourceString)  //   "This is kemp's day off"   =>  "This is kemp''s day off"
+        {
+            string SourceString = sourceString;
+
+            int i = 0;
+            while (true)
+            {
+                int pos = SourceString.IndexOf("'", i);
+                if (pos == -1)
+                    break;
+                SourceString = SourceString.Insert(pos, "'");
+                i = pos + 2;
+            }
+
+            return SourceString;
+        }
 
 
 
