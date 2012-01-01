@@ -169,7 +169,22 @@ namespace Extensions_Data
         }
 
 
-
+        /// <summary>
+        /// This function returns the column names of the first table in a DataSet
+        /// </summary>
+        /// <param name="ds"></param>
+        /// <returns></returns>
+        public static string[] GetHeadersAsStrings(this DataSet ds)
+        {
+            string[] headers = new string[ds.Tables[0].Columns.Count];
+            int i = 0;
+            foreach (DataColumn col in ds.Tables[0].Columns)
+            {
+                headers[i] = col.ColumnName;
+                i++;
+            }
+            return headers;
+        }
         
 
 
@@ -217,8 +232,17 @@ namespace Extensions_Data
             return TableExists(myAdapter.SelectCommand.Connection, tableName);
         }
 
+        
 
-
+        /// <summary>
+        /// This allows me to convert an array of DataRows into a DataSet.
+        /// </summary>
+        /// <param name="drs"></param>
+        /// <returns></returns>
+        public static DataSet ToDataSet(this DataRow[] drs)
+        {
+            throw new Exception("Not implimented yet cause I thought I needed it... but I don't...");
+        }
 
 
 
