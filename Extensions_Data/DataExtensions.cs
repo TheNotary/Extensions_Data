@@ -34,9 +34,21 @@ namespace Extensions_Data
         /// <returns>If subtractorDataSet is null, this function just returns mainDataSet...</returns>
         public static DataSet Minus(this DataSet mainDataSet, DataSet subtractorDataSet)
         {
-            DataSet Result = mainDataSet.Copy();
+            #region Declare variables
+            DataSet MainDataSet = mainDataSet.Copy();
+
+            string formatterText = ""; // this is used to format the svl query on the dataset    eg "{0} = {1}"
+            string[] myColumnNamesAndVals = new string[subtractorDataSet.Tables[0].Columns.Count * 2];  // This needs to be refactored
+            
+            Dictionary<string, string> columnValuePairs = new Dictionary<string, string>();
+
+
+            #endregion
+
+
+            #region Check that function can run
             if (subtractorDataSet.Tables.Count < 1)
-                return Result;
+                return MainDataSet;
 
             // if the two DataSets aren't comparable (ie columns don't match) then throw exception
             if (mainDataSet.Tables[0].Columns.Count != subtractorDataSet.Tables[0].Columns.Count)
@@ -49,34 +61,40 @@ namespace Extensions_Data
                 if (mainDataSet.Tables[0].Columns[i].DataType != subtractorDataSet.Tables[0].Columns[i].DataType)
                     throw new Exception("You attempted to compare two datasets whose first tables had differing column datatypes. \n\nDataSet.Minus(DataSet)");
             }
+            #endregion
 
-            string formatterText = ""; // this is used to format the svl query on the dataset    eg "{0} = {1}"
-            string[] myColumnNamesAndVals = new string[subtractorDataSet.Tables[0].Columns.Count * 2];
-            for (int i = 0; i < subtractorDataSet.Tables[0].Columns.Count * 2; i = i + 2)
+            //myColumnNamesAndVals = setColumnNamesForDataArray(myColumnNamesAndVals, subtractorDataSet.Tables[0].Columns);
+
+            for (int i = 0; i < subtractorDataSet.Tables[0].Columns.Count * 2; i = i + 2)  // Set the Column names for each column (but not their values)
             {
                 myColumnNamesAndVals[i] = subtractorDataSet.Tables[0].Columns[i / 2].ColumnName;
 
-
-                formatterText += " {" + i + "} = {" + (i + 1) + "} AND";
+                // " {0} = {1} AND {2} = {3} AND {4} = {5} AND {6} = {7} AND {8} = {9} AND {10} = {11} AND {12} = {13} AND {14} = {15} AND {16} = {17} AND {18} = {19} AND {20} = {21}"
+                formatterText += " {" + i + "} = {" + (i + 1) + "} AND"; // this should be generated based on whether the value is null or not...
+                                                                         // so done down below
             }
-            formatterText = formatterText.Substring(1, formatterText.Length - 4);
+            formatterText = formatterText.Substring(1, formatterText.Length - 4); // nop off the final " AND"
 
-
+            int rowCounter = 0;
             foreach (DataRow subtractorRow in subtractorDataSet.Tables[0].Rows)
             {
+                rowCounter++;
+                DataColumnCollection subtractorColumns = subtractorDataSet.Tables[0].Columns;
                 // select query:  index = 1, data = bla
                 List<string> nullDateOrCurrencyColumnNames = new List<string>();
                 bool doNulls = false;
 
-                for (int i = 0; i < subtractorDataSet.Tables[0].Columns.Count; i++)
+                for (int i = 0; i < subtractorColumns.Count; i++)
                 {
-                    string rowsType = subtractorDataSet.Tables[0].Columns[i].DataType.Name.ToLower();
-
+                    string rowsType = subtractorColumns[i].DataType.Name.ToLower();
                     bool skip = false;
 
                     string rowsDataAsString = "";
+                    //if (((int)subtractorRow[0]) == 238967 && myColumnNamesAndVals[(i * 2)] == "Employee")
+                    //    rowsDataAsString = "";
 
-                    switch (rowsType)
+                    #region Format SQL string based on datatype  (SWITCH CASE)
+                    switch (rowsType)   // Break at:  subtractorDataSet.Tables[0].Columns[0] == 238967
                     {
                         case "autoincrement":
                             rowsDataAsString = Convert.ToString(subtractorRow[i]);
@@ -103,6 +121,15 @@ namespace Extensions_Data
                             break;
                         case "int32":
                             rowsDataAsString = Convert.ToString(subtractorRow[i]);
+                            if (rowsDataAsString == "")
+                            {
+                                myColumnNamesAndVals[(i * 2)] = myColumnNamesAndVals[((i - 1) * 2)];
+                                myColumnNamesAndVals[(i * 2) + 1] = myColumnNamesAndVals[((i - 1) * 2) + 1];
+                                skip = true;
+
+                                doNulls = true;
+                                nullDateOrCurrencyColumnNames.Add(subtractorDataSet.Tables[0].Columns[i].ColumnName);
+                            }
                             break;
                         case "decimal":
                             rowsDataAsString = Convert.ToString(subtractorRow[i]);
@@ -120,7 +147,19 @@ namespace Extensions_Data
                             rowsDataAsString = Convert.ToString(subtractorRow[i]);
                             break;
                         case "string":
-                            rowsDataAsString = "'" + ((string)subtractorRow[i]).EscapeSingleQuotes() + "'";
+                            if (subtractorRow[i].GetType().Name == "DBNull")
+                            {
+                                //   "JobNotes" = "Customer"
+                                //   null      =  "588"
+                                myColumnNamesAndVals[(i * 2)]     = myColumnNamesAndVals[((i - 1) * 2)];
+                                myColumnNamesAndVals[(i * 2) + 1] = myColumnNamesAndVals[((i - 1) * 2) + 1];
+                                skip = true;
+
+                                doNulls = true;
+                                nullDateOrCurrencyColumnNames.Add(subtractorDataSet.Tables[0].Columns[i].ColumnName);
+                            }
+                            else
+                                rowsDataAsString = "'" + ((string)subtractorRow[i]).EscapeSingleQuotes() + "'";
                             break;
                         //case "yesno":
                         //        rowsDataAsString = Convert.ToString(subtractorRow[i]);
@@ -135,6 +174,7 @@ namespace Extensions_Data
                         default:
                             throw new Exception("unexpected datatype.  Add this type to the case switch in the Minus extention.");
                     }
+                    #endregion
 
                     if (!skip)
                         myColumnNamesAndVals[(i * 2) + 1] = rowsDataAsString;
@@ -142,31 +182,48 @@ namespace Extensions_Data
 
 
                 string svl = string.Format(formatterText,   //  eg  "{0} = {1}, {2} = {3}"
-                    myColumnNamesAndVals);                  //  eg  { "Index", "1", "Data", "bla" }
+                    myColumnNamesAndVals);                  //  eg  { "Index", "1", "StringData", "'bla'" }
 
-                // I need to escape single quotes...
-                DataRow[] HitRows = Result.Tables[0].Select(svl);
+                DataRow[] HitRows = MainDataSet.Tables[0].Select(svl);  // Look in MainDataset to see if the subtractor's record exists there
+                // and if it does, delete it from the MainDataset
 
-                foreach (DataRow rw in HitRows)
+                #region delete all rows that were found in the subtractor row aswell as in the MainDataSet
+                foreach (DataRow rw in HitRows)                                     // Check each row of the hits...
                 {
                     // I could check for nulls here manually, but that might be a sloppy method
                     if (doNulls)
-                        foreach (string nullDate in nullDateOrCurrencyColumnNames)
+                        foreach (string nullDate in nullDateOrCurrencyColumnNames)  // Scan through all the null columns and...
                         {
-                            if (rw[nullDate].GetType().Name == "DBNull")
+                            if (rw[nullDate].GetType().Name == "DBNull")            // if they're actually DBNull... then... delete them from hits?
                             {
-                                rw.Delete();
+                                rw.Delete();  // this doesn't work because it deletes it at the first Null occurance, instead of 100% null match
                                 break;
                             }
                         }
                     else
                         rw.Delete();
                 }
+                #endregion
+                // reset the array incase we messed with it in our "optimized" way...
+                myColumnNamesAndVals = setColumnNamesForDataArray(myColumnNamesAndVals, subtractorDataSet.Tables[0].Columns); // OPTIMIZE bury this behind a bool check or get rid of all these damn bool checks
             }
-            Result.AcceptChanges();
+            MainDataSet.AcceptChanges();
 
-            return Result;
+            return MainDataSet;
         }
+
+
+        private static string[] setColumnNamesForDataArray(string[] myColumnNamesAndVals, DataColumnCollection subtractorColumns)
+        {
+            for (int i = 0; i < subtractorColumns.Count * 2; i = i + 2)  // Set the Column names for each column (but not their values)
+            {
+                myColumnNamesAndVals[i] = subtractorColumns[i / 2].ColumnName;
+            }
+            return myColumnNamesAndVals;
+        }
+
+
+
 
 
         /// <summary>
@@ -174,16 +231,43 @@ namespace Extensions_Data
         /// </summary>
         /// <param name="ds"></param>
         /// <returns></returns>
-        public static string[] GetHeadersAsStrings(this DataSet ds)
+        public static string[] GetTableHeadersAsStrings(this DataSet ds)
         {
             string[] headers = new string[ds.Tables[0].Columns.Count];
             int i = 0;
             foreach (DataColumn col in ds.Tables[0].Columns)
             {
-                headers[i] = col.ColumnName;
-                i++;
+                headers[i++] = col.ColumnName;
             }
             return headers;
+        }
+
+        /// <summary>
+        /// Get's the table headers for the table name specified
+        /// </summary>
+        /// <param name="ds"></param>
+        /// <param name="tableName">Table you would like to query</param>
+        /// <returns></returns>
+        public static string[] GetTableHeadersAsStrings(this DataSet ds, string tableName)
+        {
+            DataTable dt;
+            try
+            {
+                dt = ds.Tables[tableName];
+
+                string[] headers = new string[dt.Columns.Count];
+                int i = 0;
+                foreach (DataColumn col in dt.Columns)
+                {
+                    headers[i++] = col.ColumnName;
+                }
+                return headers;
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Error...  probably table name not found or something..." + e.Message);
+            }
+            
         }
         
 
