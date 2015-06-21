@@ -8,3 +8,7 @@ C:\archive\TECH\SCRIPT\My Scripts\Cshrp\my_libs\Extensions_Data\Extensions_Data\
 C:\archive\TECH\SCRIPT\My Scripts\Cshrp\my_libs\Extensions_Data\Extensions_Data\obj\Debug\ResolveAssemblyReference.cache
 C:\archive\TECH\SCRIPT\My Scripts\Cshrp\my_libs\Extensions_Data\Extensions_Data\obj\Debug\Extensions_Data.dll
 C:\archive\TECH\SCRIPT\My Scripts\Cshrp\my_libs\Extensions_Data\Extensions_Data\obj\Debug\Extensions_Data.pdb
+D:\Archive\TECH\SCRIPT\My Scripts\Cshrp Work Code\my_libs\Extensions_Data\Extensions_Data\bin\Debug\Extensions_Data.dll
+D:\Archive\TECH\SCRIPT\My Scripts\Cshrp Work Code\my_libs\Extensions_Data\Extensions_Data\bin\Debug\Extensions_Data.pdb
+D:\Archive\TECH\SCRIPT\My Scripts\Cshrp Work Code\my_libs\Extensions_Data\Extensions_Data\obj\Debug\Extensions_Data.dll
+D:\Archive\TECH\SCRIPT\My Scripts\Cshrp Work Code\my_libs\Extensions_Data\Extensions_Data\obj\Debug\Extensions_Data.pdb

@@ -16,3 +16,7 @@ C:\Users\newt\Desktop\NET projects\Extensions_Data\DemonstrationProject\obj\x86\
 D:\Archive\TECH\SCRIPT\My Scripts\Cshrp Work Code\my_libs\Extensions_Data\DemonstrationProject\bin\Debug\DemonstrationProject.exe.config
 D:\Archive\TECH\SCRIPT\My Scripts\Cshrp Work Code\my_libs\Extensions_Data\DemonstrationProject\obj\x86\Debug\DemonstrationProject.exe
 D:\Archive\TECH\SCRIPT\My Scripts\Cshrp Work Code\my_libs\Extensions_Data\DemonstrationProject\obj\x86\Debug\DemonstrationProject.pdb
+D:\Archive\TECH\SCRIPT\My Scripts\Cshrp Work Code\my_libs\Extensions_Data\DemonstrationProject\obj\x86\Debug\DemonstrationProject.csprojResolveAssemblyReference.cache
+D:\Archive\TECH\SCRIPT\My Scripts\Cshrp Work Code\my_libs\Extensions_Data\DemonstrationProject\obj\x86\Debug\DemonstrationProject.Form1.resources
+D:\Archive\TECH\SCRIPT\My Scripts\Cshrp Work Code\my_libs\Extensions_Data\DemonstrationProject\obj\x86\Debug\DemonstrationProject.Properties.Resources.resources
+D:\Archive\TECH\SCRIPT\My Scripts\Cshrp Work Code\my_libs\Extensions_Data\DemonstrationProject\obj\x86\Debug\DemonstrationProject.csproj.GenerateResource.Cache
